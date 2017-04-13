@@ -4,6 +4,7 @@ from sklearn.datasets import load_iris
 from sklearn.datasets import make_regression
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.utils.estimator_checks import check_estimator
 from sklearn.utils.testing import assert_array_equal
 from sklearn.utils.testing import assert_array_almost_equal
 from sklearn.utils.testing import assert_array_less

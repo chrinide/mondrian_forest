@@ -3,6 +3,7 @@ from scipy import sparse
 from sklearn.ensemble.forest import ForestRegressor
 from sklearn.exceptions import NotFittedError
 from sklearn.utils.validation import check_array
+from sklearn.utils.validation import check_X_y
 
 from ..tree import MondrianTreeRegressor
 
@@ -57,6 +58,32 @@ class MondrianForestRegressor(ForestRegressor):
 
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
+
+    def fit(self, X, y):
+        """Builds a forest of trees from the training set (X, y).
+        Parameters
+        ----------
+        X : array-like or sparse matrix of shape = [n_samples, n_features]
+            The training input samples. Internally, its dtype will be converted to
+            ``dtype=np.float32``. If a sparse matrix is provided, it will be
+            converted into a sparse ``csc_matrix``.
+        y : array-like, shape = [n_samples] or [n_samples, n_outputs]
+            The target values (class labels in classification, real numbers in
+            regression).
+        sample_weight : array-like, shape = [n_samples] or None
+            Sample weights. If None, then samples are equally weighted. Splits
+            that would create child nodes with net zero or negative weight are
+            ignored while searching for a split in each node. In the case of
+            classification, splits are also ignored if they would result in any
+            single class carrying a negative weight in either child node.
+        Returns
+        -------
+        self : object
+            Returns self.
+        """
+        # multi_output is not supported.
+        X, y = check_X_y(X, y, dtype=np.float32, multi_output=False)
+        return super(MondrianForestRegressor, self).fit(X, y)
 
     def predict(self, X, return_std=False):
         """

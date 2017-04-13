@@ -29,11 +29,12 @@ from sklearn.base import BaseEstimator
 from sklearn.base import ClassifierMixin
 from sklearn.base import RegressorMixin
 from sklearn.externals import six
-from sklearn.utils import check_array
 from sklearn.utils import check_random_state
 from sklearn.utils import compute_sample_weight
 from sklearn.utils.multiclass import check_classification_targets
+from sklearn.utils.validation import check_array
 from sklearn.utils.validation import check_is_fitted
+from sklearn.utils.validation import check_X_y
 from sklearn.exceptions import NotFittedError
 
 from ._criterion import Criterion
@@ -101,19 +102,9 @@ class BaseDecisionTree(six.with_metaclass(ABCMeta, BaseEstimator)):
     def fit(self, X, y, sample_weight=None, check_input=True,
             X_idx_sorted=None):
 
-        if issparse(X):
-            raise ValueError("No support for sparse input.")
         random_state = check_random_state(self.random_state)
-
         if check_input:
-            X = check_array(X, dtype=DTYPE, accept_sparse="csc")
-            y = check_array(y, ensure_2d=False, dtype=None)
-            if issparse(X):
-                X.sort_indices()
-
-                if X.indices.dtype != np.intc or X.indptr.dtype != np.intc:
-                    raise ValueError("No support for np.int64 index based "
-                                     "sparse matrices")
+            X, y = check_X_y(X, y, dtype=DTYPE, multi_output=False)
 
         # Determine output settings
         n_samples, self.n_features_ = X.shape
